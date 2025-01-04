@@ -9,9 +9,12 @@ type Example struct {
 }
 
 // AutoMigrateExamples migrates the example table
-func AutoMigrateExamples(db *gorm.DB) {
+func AutoMigrateExamples(db *gorm.DB) error {
 	err := db.AutoMigrate(&Example{})
 	if err != nil {
 		panic("Failed to migrate example table: " + err.Error())
 	}
+	return nil
+
+
 }

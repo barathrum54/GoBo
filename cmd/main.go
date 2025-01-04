@@ -25,7 +25,10 @@ func main() {
 	log.Println("Database connection established with GORM.")
 
 	// Migration işlemleri
-	models.AutoMigrateExamples(db.GormDB)
+	err = models.AutoMigrateExamples(db.GormDB)
+	if err != nil {
+		log.Fatalf("[Error] Error during migrations: %v", err)
+	}
 	log.Println("Database migrations completed.")
 
 		// Logger yapılandırmasını yükle

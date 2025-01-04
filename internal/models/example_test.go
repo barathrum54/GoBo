@@ -10,17 +10,22 @@ import (
 )
 
 // setupGormTestDB initializes the test database using GORM
-func setupGormTestDB() {
+func setupGormTestDB(t *testing.T) {
 	log.Println("[Setup] Starting GORM test database setup...")
+
+	// Load .env variables
 	err := godotenv.Load("../../.env")
 	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+		t.Fatalf("[Error] Error loading .env file: %v", err)
 	}
 
+	// Connect to GORM
 	db.ConnectGORM()
 
-	// Tabloları oluştur
-	AutoMigrateExamples(db.GormDB)
+	// Run database migrations and check for errors
+	if err := AutoMigrateExamples(db.GormDB); err != nil {
+		t.Fatalf("[Error] Error during migrations: %v", err)
+	}
 
 	log.Println("[Setup] Test database setup completed.")
 }
@@ -39,34 +44,34 @@ func teardownGormTestDB() {
 }
 
 func TestCreateExampleGorm(t *testing.T) {
-	setupGormTestDB()
+	setupGormTestDB(t)
 	defer teardownGormTestDB()
 
-	// Yeni bir kayıt ekle
+	// Create a new record
 	example := Example{Name: "Test Name"}
 	result := db.GormDB.Create(&example)
 	assert.NoError(t, result.Error, "Error occurred while creating an example")
 
-	// Veritabanını kontrol et
+	// Check database for the number of records
 	var count int64
 	db.GormDB.Model(&Example{}).Count(&count)
 	assert.Equal(t, int64(1), count, "Expected 1 row in examples table")
 }
 
 func TestGetExamplesGorm(t *testing.T) {
-	setupGormTestDB()
+	setupGormTestDB(t)
 	defer teardownGormTestDB()
 
-	// Test verileri ekle
+	// Add test data
 	db.GormDB.Create(&Example{Name: "Example 1"})
 	db.GormDB.Create(&Example{Name: "Example 2"})
 
-	// Tablodan kayıtları getir
+	// Retrieve records from the table
 	var examples []Example
 	result := db.GormDB.Find(&examples)
 	assert.NoError(t, result.Error, "Error occurred while retrieving examples")
 
-	// Kayıt sayısını doğrula
+	// Verify the number of records
 	assert.Equal(t, 2, len(examples), "Expected 2 examples")
 	assert.Equal(t, "Example 1", examples[0].Name)
 	assert.Equal(t, "Example 2", examples[1].Name)
