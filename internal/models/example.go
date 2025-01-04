@@ -1,38 +1,17 @@
 package models
 
-import (
-	"context"
-	"gobo/internal/db"
-)
+import "gorm.io/gorm"
 
-// Example represents an example table structure
+// Example represents the example table
 type Example struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID   uint   `gorm:"primaryKey"`
+	Name string `gorm:"type:varchar(100);not null"`
 }
 
-// CreateExample inserts a new record into the "examples" table
-func CreateExample(name string) error {
-	_, err := db.Conn.Exec(context.Background(), "INSERT INTO examples (name) VALUES ($1)", name)
-	return err
-}
-
-// GetExamples retrieves all records from the "examples" table
-func GetExamples() ([]Example, error) {
-	rows, err := db.Conn.Query(context.Background(), "SELECT id, name FROM examples")
+// AutoMigrateExamples migrates the example table
+func AutoMigrateExamples(db *gorm.DB) {
+	err := db.AutoMigrate(&Example{})
 	if err != nil {
-		return nil, err
+		panic("Failed to migrate example table: " + err.Error())
 	}
-	defer rows.Close()
-
-	var examples []Example
-	for rows.Next() {
-		var example Example
-		if err := rows.Scan(&example.ID, &example.Name); err != nil {
-			return nil, err
-		}
-		examples = append(examples, example)
-	}
-
-	return examples, nil
 }

@@ -1,111 +1,65 @@
 package models
 
 import (
-	"context"
 	"gobo/internal/db"
 	"log"
 	"testing"
 
-	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 )
 
-// setupTestDB initializes the test database, dropping and recreating the required table
-func setupTestDB() {
-	log.Println("[Setup] Starting test database setup...")
+// setupGormTestDB initializes the test database using GORM
+func setupGormTestDB() {
+	log.Println("[Setup] Starting GORM test database setup...")
 
-	// Load environment variables
-	err := godotenv.Load("../../.env")
-	if err != nil {
-		log.Fatalf("[Setup] Error loading .env file: %v", err)
-	}
+	db.ConnectGORM()
 
-	// Connect to the database
-	db.Connect()
-	log.Println("[Setup] Connected to the database.")
-
-	// Drop the table if it exists
-	_, err = db.Conn.Exec(context.Background(), "DROP TABLE IF EXISTS examples")
-	if err != nil {
-		log.Fatalf("[Setup] Failed to drop table: %v", err)
-	}
-	log.Println("[Setup] Table 'examples' dropped successfully.")
-
-	// Create the table
-	_, err = db.Conn.Exec(context.Background(), `
-		CREATE TABLE examples (
-			id SERIAL PRIMARY KEY,
-			name VARCHAR(100) NOT NULL
-		)
-	`)
-	if err != nil {
-		log.Fatalf("[Setup] Failed to create table: %v", err)
-	}
-	log.Println("[Setup] Table 'examples' created successfully.")
+	// Tabloları oluştur
+	AutoMigrateExamples(db.GormDB)
 
 	log.Println("[Setup] Test database setup completed.")
 }
 
-// teardownTestDB cleans up the test database by dropping the test table
-func teardownTestDB() {
-	log.Println("[Teardown] Starting test database teardown...")
+// teardownGormTestDB drops all test tables
+func teardownGormTestDB() {
+	log.Println("[Teardown] Starting GORM test database teardown...")
 
-	// Drop the table
-	_, err := db.Conn.Exec(context.Background(), "DROP TABLE IF EXISTS examples")
-	if err != nil {
-		log.Printf("[Teardown] Failed to drop table: %v", err)
-	} else {
-		log.Println("[Teardown] Table 'examples' dropped successfully.")
-	}
+	sqlDB, _ := db.GormDB.DB()
+	sqlDB.Exec("DROP TABLE IF EXISTS examples")
 
 	log.Println("[Teardown] Test database teardown completed.")
 }
 
-// TestCreateExample tests the CreateExample function for inserting a new record
-func TestCreateExample(t *testing.T) {
-	log.Println("[TestCreateExample] Starting test...")
+func TestCreateExampleGorm(t *testing.T) {
+	setupGormTestDB()
+	defer teardownGormTestDB()
 
-	// Setup and teardown
-	setupTestDB()
-	defer teardownTestDB()
+	// Yeni bir kayıt ekle
+	example := Example{Name: "Test Name"}
+	result := db.GormDB.Create(&example)
+	assert.NoError(t, result.Error, "Error occurred while creating an example")
 
-	// Act: Insert a new record
-	err := CreateExample("Test Name")
-	assert.NoError(t, err, "[TestCreateExample] Error occurred while creating an example.")
-
-	// Assert: Verify the record was inserted
-	rows, err := db.Conn.Query(context.Background(), "SELECT id, name FROM examples")
-	assert.NoError(t, err, "[TestCreateExample] Error occurred while querying the database.")
-
-	var count int
-	for rows.Next() {
-		count++
-	}
-
-	assert.Equal(t, 1, count, "[TestCreateExample] Expected 1 row in examples table.")
-	log.Println("[TestCreateExample] Test completed successfully.")
+	// Veritabanını kontrol et
+	var count int64
+	db.GormDB.Model(&Example{}).Count(&count)
+	assert.Equal(t, int64(1), count, "Expected 1 row in examples table")
 }
 
-// TestGetExamples tests the GetExamples function for retrieving all records
-func TestGetExamples(t *testing.T) {
-	log.Println("[TestGetExamples] Starting test...")
+func TestGetExamplesGorm(t *testing.T) {
+	setupGormTestDB()
+	defer teardownGormTestDB()
 
-	// Setup and teardown
-	setupTestDB()
-	defer teardownTestDB()
+	// Test verileri ekle
+	db.GormDB.Create(&Example{Name: "Example 1"})
+	db.GormDB.Create(&Example{Name: "Example 2"})
 
-	// Act: Insert multiple records
-	CreateExample("Example 1")
-	CreateExample("Example 2")
+	// Tablodan kayıtları getir
+	var examples []Example
+	result := db.GormDB.Find(&examples)
+	assert.NoError(t, result.Error, "Error occurred while retrieving examples")
 
-	// Act: Retrieve the records
-	examples, err := GetExamples()
-	assert.NoError(t, err, "[TestGetExamples] Error occurred while retrieving examples.")
-
-	// Assert: Verify the number of records
-	assert.Equal(t, 2, len(examples), "[TestGetExamples] Expected 2 examples.")
-	assert.Equal(t, "Example 1", examples[0].Name, "[TestGetExamples] First example name mismatch.")
-	assert.Equal(t, "Example 2", examples[1].Name, "[TestGetExamples] Second example name mismatch.")
-
-	log.Println("[TestGetExamples] Test completed successfully.")
+	// Kayıt sayısını doğrula
+	assert.Equal(t, 2, len(examples), "Expected 2 examples")
+	assert.Equal(t, "Example 1", examples[0].Name)
+	assert.Equal(t, "Example 2", examples[1].Name)
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"gobo/internal/app"
 	"gobo/internal/db"
+	"gobo/internal/models"
 	"log"
 
 	"github.com/joho/godotenv"
@@ -14,9 +15,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
+	log.Println(".env file loaded successfully.")
 
-	// Veritabanı bağlantısını başlat
-	db.Connect()
+	// GORM bağlantısını başlat
+	db.ConnectGORM()
+	log.Println("Database connection established with GORM.")
+
+	// Migration işlemleri
+	models.AutoMigrateExamples(db.GormDB)
+	log.Println("Database migrations completed.")
 
 	// Fiber uygulamasını başlat
 	application := app.NewApp()

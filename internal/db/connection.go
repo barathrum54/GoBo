@@ -1,35 +1,41 @@
 package db
 
 import (
-	"context"
 	"log"
 	"os"
 	"time"
 
-	"github.com/jackc/pgx/v5"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
-var Conn *pgx.Conn
+var GormDB *gorm.DB
 
-// Connect initializes a connection to the PostgreSQL database
-func Connect(optionalDSN ...string) {
+// ConnectGORM initializes a GORM connection to the PostgreSQL database
+func ConnectGORM() {
 	dsn := os.Getenv("DATABASE_URL")
-	if len(optionalDSN) > 0 {
-		dsn = optionalDSN[0]
-	}
 	if dsn == "" {
 		log.Fatal("DATABASE_URL environment variable is not set")
 	}
 
 	var err error
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	Conn, err = pgx.Connect(ctx, dsn)
+	GormDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info), // Daha fazla bilgi için
+	})
 	if err != nil {
-		log.Fatalf("Unable to connect to database: %v", err)
+		log.Fatalf("Failed to connect to the database: %v", err)
 	}
 
-	log.Println("Connected to PostgreSQL!")
-}
+	sqlDB, err := GormDB.DB()
+	if err != nil {
+		log.Fatalf("Failed to get database instance: %v", err)
+	}
 
+	// Connection pool ayarları
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetConnMaxLifetime(30 * time.Minute)
+
+	log.Println("Connected to the database using GORM!")
+}
