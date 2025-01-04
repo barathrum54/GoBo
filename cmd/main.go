@@ -2,6 +2,7 @@ package main
 
 import (
 	"gobo/internal/app"
+	"gobo/internal/cache"
 	"gobo/internal/db"
 	"gobo/internal/logger"
 	"gobo/internal/models"
@@ -34,11 +35,14 @@ func main() {
 
 	// Logger'ı başlat
 	logger.InitLogger(config)
-// Örnek loglama
+	// Örnek loglama
 	logger.Log.Info("Application started",
 		zap.String("service", "gobo"),
 		zap.String("status", "running"),
 	)
+	// Redis bağlantısını başlat
+	cache.Connect()
+
 	// Fiber uygulamasını başlat
 	application := app.NewApp()
 
