@@ -5,12 +5,17 @@ import (
 	"log"
 	"testing"
 
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 )
 
 // setupGormTestDB initializes the test database using GORM
 func setupGormTestDB() {
 	log.Println("[Setup] Starting GORM test database setup...")
+	err := godotenv.Load("../../.env")
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
 
 	db.ConnectGORM()
 
