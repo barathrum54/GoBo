@@ -44,7 +44,13 @@ func InitLogger(config Config) {
 	if err != nil {
 		log.Fatalf("Failed to initialize logger: %v", err)
 	}
-	defer Log.Sync() // Buffer temizliği
+
+	// Sync işlemini kontrol et
+	defer func() {
+		if syncErr := Log.Sync(); syncErr != nil {
+			log.Printf("Failed to sync logger: %v", syncErr)
+		}
+	}()
 
 	Log.Info("Logger initialized successfully")
 }

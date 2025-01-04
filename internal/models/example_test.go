@@ -29,8 +29,11 @@ func setupGormTestDB() {
 func teardownGormTestDB() {
 	log.Println("[Teardown] Starting GORM test database teardown...")
 
-	sqlDB, _ := db.GormDB.DB()
-	sqlDB.Exec("DROP TABLE IF EXISTS examples")
+	if err := db.GormDB.Migrator().DropTable(&Example{}); err != nil {
+		log.Printf("[Teardown] Failed to drop table: %v", err)
+	} else {
+		log.Println("[Teardown] Table 'examples' dropped successfully.")
+	}
 
 	log.Println("[Teardown] Test database teardown completed.")
 }
