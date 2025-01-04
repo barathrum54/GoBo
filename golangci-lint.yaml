@@ -1,0 +1,24 @@
+run:
+  timeout: 5m # Maksimum çalışma süresi
+  tests: true # Test dosyalarını da kontrol et
+
+linters:
+  enable:
+    - govet # Kodun mantığını kontrol eder
+    - staticcheck # Gelişmiş statik analiz
+    - deadcode # Kullanılmayan kodları tespit eder
+    - errcheck # Hata kontrollerini zorunlu kılar
+    - gocyclo # Fonksiyon karmaşıklığını kontrol eder
+    - gofmt # Kod formatı
+    - goimports # İthalat düzeni
+    - ineffassign # Kullanılmayan atamalar
+    - structcheck # Kullanılmayan struct alanları
+
+issues:
+  exclude-rules:
+    - path: _test\.go$ # Test dosyalarını hariç tutmak için
+      linters:
+        - gofmt
+        - goimports
+  max-issues-per-linter: 50
+  max-same-issues: 3
