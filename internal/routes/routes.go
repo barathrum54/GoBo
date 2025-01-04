@@ -1,12 +1,35 @@
 package routes
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"gobo/internal/models"
 
-// Register, uygulama için tüm route'ları kaydeder.
+	"github.com/gofiber/fiber/v2"
+)
+
+// Register registers all routes for the application
 func Register(app *fiber.App) {
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Welcome to Gobo!")
+	app.Get("/examples", func(c *fiber.Ctx) error {
+		examples, err := models.GetExamples()
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to fetch examples"})
+		}
+		return c.JSON(examples)
 	})
 
-	// Ek route'lar burada tanımlanabilir
+	app.Post("/examples", func(c *fiber.Ctx) error {
+		type request struct {
+			Name string `json:"name"`
+		}
+
+		var body request
+		if err := c.BodyParser(&body); err != nil {
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+		}
+
+		if err := models.CreateExample(body.Name); err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to create example"})
+		}
+
+		return c.Status(201).JSON(fiber.Map{"message": "Example created successfully"})
+	})
 }
