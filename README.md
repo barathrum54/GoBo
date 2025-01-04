@@ -60,6 +60,7 @@ gobo/
 │   ├── app/           # Fiber uygulaması ve yapılandırma
 │   ├── db/            # Veritabanı bağlantıları
 │   ├── logger/        # Zap logger yapılandırması
+│   ├── cache/         # Redis bağlantısı ve yardımcı fonksiyonlar
 │   ├── models/        # GORM modelleri
 │   ├── routes/        # API rotaları
 ├── .env               # Ortam değişkenleri
@@ -76,6 +77,7 @@ gobo/
 - [Fiber](https://gofiber.io/) - HTTP framework
 - [GORM](https://gorm.io/) - ORM kütüphanesi
 - [Zap](https://github.com/uber-go/zap) - Loglama
+- [Redis](https://redis.io/) - Önbellekleme
 - [PostgreSQL](https://www.postgresql.org/) - Veritabanı
 - [GolangCI-Lint](https://golangci-lint.run/) - Kod analizi ve linter
 
@@ -101,6 +103,31 @@ Projenizde statik kod analizi ve linter kontrolü yapmak için:
 
 ```bash
 golangci-lint run
+```
+
+---
+
+## 🔧 Redis Önbelleği
+
+Proje, Redis ile önbellekleme desteğine sahiptir. Redis bağlantısı `internal/cache` modülünde yönetilir ve API rotalarında kullanılabilir.
+
+### Örnek Kullanım:
+
+Aşağıdaki örnek, bir veriyi Redis önbelleğine kaydetme ve alma işlemini gösterir:
+
+```go
+import "gobo/internal/cache"
+
+// Veriyi Redis'e kaydet
+cache.Set("key", "value", 60*time.Second)
+
+// Redis'ten veri al
+value, err := cache.Get("key")
+if err != nil {
+    log.Println("Cache miss")
+} else {
+    log.Printf("Cache hit: %s", value)
+}
 ```
 
 ---
@@ -132,11 +159,3 @@ Loglama yapılandırmasını değiştirmek için `InitLogger` fonksiyonunu kulla
 5. Bir PR (Pull Request) oluşturun.
 
 ---
-
-## 📄 Lisans
-
-Bu proje MIT Lisansı ile lisanslanmıştır.
-
-```
-
-```
