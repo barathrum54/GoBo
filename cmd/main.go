@@ -3,10 +3,12 @@ package main
 import (
 	"gobo/internal/app"
 	"gobo/internal/db"
+	"gobo/internal/logger"
 	"gobo/internal/models"
 	"log"
 
 	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -25,6 +27,18 @@ func main() {
 	models.AutoMigrateExamples(db.GormDB)
 	log.Println("Database migrations completed.")
 
+		// Logger yapılandırmasını yükle
+	config := logger.DefaultConfig()
+	config.Environment = "development" // Geliştirme ortamında çalışıyoruz
+	config.OutputPaths = []string{"stdout"} // Sadece terminale yaz
+
+	// Logger'ı başlat
+	logger.InitLogger(config)
+// Örnek loglama
+	logger.Log.Info("Application started",
+		zap.String("service", "gobo"),
+		zap.String("status", "running"),
+	)
 	// Fiber uygulamasını başlat
 	application := app.NewApp()
 
