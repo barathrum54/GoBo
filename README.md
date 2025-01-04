@@ -1,6 +1,6 @@
 # GoBo
 
-GoBo, Go programlama dilinde yazılmış modüler ve ölçeklenebilir bir backend boilerplate'tir. Fiber framework ve GORM ORM kullanılarak geliştirilmiştir. Bu proje, hızlı API geliştirme ve kolay genişletilebilirlik için tasarlanmıştır.
+GoBo, Go programlama dilinde yazılmış modüler ve ölçeklenebilir bir backend boilerplate'tir. Fiber framework, GORM ORM ve Zap logging gibi modern araçlar kullanılarak geliştirilmiştir. Bu proje, hızlı API geliştirme ve kolay genişletilebilirlik için tasarlanmıştır.
 
 ---
 
@@ -8,6 +8,7 @@ GoBo, Go programlama dilinde yazılmış modüler ve ölçeklenebilir bir backen
 
 - **Fiber Framework**: Hızlı ve esnek HTTP sunucusu.
 - **GORM**: Veritabanı ORM desteği ile kolay modelleme ve migration.
+- **Zap Logging**: Performanslı ve yapılandırılabilir loglama.
 - **Modüler Mimari**: API genişletilebilir yapıya sahip.
 - **Yüksek Kod Kalitesi**: `golangci-lint` ile linter ve statik analiz entegrasyonu.
 - **Test Desteği**: `testify` kullanarak birim testler için yapılandırılmış test altyapısı.
@@ -17,10 +18,11 @@ GoBo, Go programlama dilinde yazılmış modüler ve ölçeklenebilir bir backen
 ## 🛠️ Kurulum ve Çalıştırma
 
 ### 1. **Depoyu Klonlayın**
+
 ```bash
 git clone https://github.com/username/gobo.git
 cd gobo
-````
+```
 
 ### 2. **Bağımlılıkları Yükleyin**
 
@@ -57,6 +59,7 @@ gobo/
 ├── internal/
 │   ├── app/           # Fiber uygulaması ve yapılandırma
 │   ├── db/            # Veritabanı bağlantıları
+│   ├── logger/        # Zap logger yapılandırması
 │   ├── models/        # GORM modelleri
 │   ├── routes/        # API rotaları
 ├── .env               # Ortam değişkenleri
@@ -72,6 +75,7 @@ gobo/
 - [Go](https://go.dev/) - Programlama dili
 - [Fiber](https://gofiber.io/) - HTTP framework
 - [GORM](https://gorm.io/) - ORM kütüphanesi
+- [Zap](https://github.com/uber-go/zap) - Loglama
 - [PostgreSQL](https://www.postgresql.org/) - Veritabanı
 - [GolangCI-Lint](https://golangci-lint.run/) - Kod analizi ve linter
 
@@ -98,6 +102,24 @@ Projenizde statik kod analizi ve linter kontrolü yapmak için:
 ```bash
 golangci-lint run
 ```
+
+---
+
+## 🔥 Loglama
+
+Proje, **Zap** kullanılarak performanslı ve yapılandırılabilir bir loglama altyapısına sahiptir. Loglama yapılandırması `internal/logger` dizininde bulunur.
+
+### Örnek Kullanım:
+
+```go
+import "gobo/internal/logger"
+
+func Example() {
+    logger.Log.Info("Example log message", zap.String("key", "value"))
+}
+```
+
+Loglama yapılandırmasını değiştirmek için `InitLogger` fonksiyonunu kullanabilirsiniz.
 
 ---
 
