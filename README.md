@@ -1,4 +1,3 @@
-````
 # GoBo
 
 GoBo, Go programlama dilinde yazılmış modüler ve ölçeklenebilir bir backend boilerplate'tir. Fiber framework ve GORM ORM kullanılarak geliştirilmiştir. Bu proje, hızlı API geliştirme ve kolay genişletilebilirlik için tasarlanmıştır.
