@@ -9,6 +9,10 @@ import (
 
 // Register registers all routes for the application
 func Register(app *fiber.App) {
+
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, World!")
+	})
 	// GET /examples - Retrieve all examples
 	app.Get("/examples", func(c *fiber.Ctx) error {
 		var examples []models.Example
