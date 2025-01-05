@@ -3,6 +3,7 @@
 package main_test
 
 import (
+	"log"
 	"net/http"
 	"testing"
 	"time"
@@ -17,11 +18,13 @@ import (
 func TestHTTPServer(t *testing.T) {
 	// Start the Fiber application in a separate goroutine to allow parallel execution.
 	go func() {
-		// Initialize the application instance using app.NewApp().
-		application := app.NewApp()
+    // Initialize the application instance using app.NewApp().
+    application := app.NewApp()
 
-		// Start the application on port 3000. No error handling here as it's for testing.
-		application.Listen(":3000")
+    // Start the application on port 3000 and handle potential errors.
+    if err := application.Listen(":3000"); err != nil {
+        log.Fatalf("Failed to start application: %v", err)
+    }
 	}()
 
 	// Allow the server some time to start up before sending requests.
