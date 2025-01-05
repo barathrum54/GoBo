@@ -46,7 +46,7 @@ Migrations will run automatically when the project starts, creating necessary ta
 ### 5. **Start the Server**
 
 ```bash
-go run main.go
+go run cmd/main.go
 ```
 
 The server will be accessible at `http://localhost:3000`.
