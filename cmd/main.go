@@ -3,6 +3,7 @@
 package main
 
 import (
+	_ "gobo/docs"
 	"gobo/internal/app"
 	"gobo/internal/cache"
 	"gobo/internal/db"
@@ -15,6 +16,25 @@ import (
 	"gorm.io/gorm"
 )
 
+//	@title			Swagger Example API
+//	@version		1.0
+//	@description	This is a sample server celler server.
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+//	@host		localhost:8080
+//	@BasePath	/
+
+//	@securityDefinitions.basic	BasicAuth
+
+//	@externalDocs.description	OpenAPI
+//	@externalDocs.url			https://swagger.io/resources/open-api/
 // Setup initializes the application's dependencies, including:
 // - Loading environment variables
 // - Connecting to the database (GORM)

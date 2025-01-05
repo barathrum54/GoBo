@@ -1,0 +1,97 @@
+definitions:
+  models.Example:
+    properties:
+      id:
+        description: Primary key for the record.
+        type: integer
+      name:
+        description: Name field, required with a max length of 100 characters.
+        type: string
+    type: object
+  routes.CreateExampleRequest:
+    properties:
+      name:
+        description: The name of the example to be created.
+        type: string
+    type: object
+  routes.CreateExampleResponse:
+    properties:
+      id:
+        type: integer
+      message:
+        type: string
+    type: object
+  routes.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /:
+    get:
+      consumes:
+      - '*/*'
+      description: Responds with a simple "Hello, World!" message.
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Hello, World!
+          schema:
+            type: string
+      summary: Root Endpoint
+      tags:
+      - root
+  /examples:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all examples from the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Example'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      summary: Get All Examples
+      tags:
+      - examples
+    post:
+      consumes:
+      - application/json
+      description: Creates a new example in the database.
+      parameters:
+      - description: Example Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/routes.CreateExampleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/routes.CreateExampleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      summary: Create Example
+      tags:
+      - examples
+swagger: "2.0"
