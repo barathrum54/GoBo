@@ -7,46 +7,53 @@ import (
 	"gobo/internal/logger"
 	"gobo/internal/models"
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
-	"go.uber.org/zap"
 )
 
-func main() {
-	// .env dosyasını yükle
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+// Setup initializes the application's dependencies
+func Setup() error {
+	// Load .env file only if it exists
+	if _, err := os.Stat(".env"); err == nil {
+		if err := godotenv.Load(".env"); err != nil {
+			return err
+		}
+		log.Println(".env file loaded successfully.")
+	} else {
+		log.Println("No .env file found, using existing environment variables.")
 	}
-	log.Println(".env file loaded successfully.")
 
-	// GORM bağlantısını başlat
+	// Initialize GORM
 	db.ConnectGORM()
 	log.Println("Database connection established with GORM.")
 
-	// Migration işlemleri
-	err = models.AutoMigrateExamples(db.GormDB)
+	// Run migrations
+	err := models.AutoMigrateExamples(db.GormDB)
 	if err != nil {
-		log.Fatalf("[Error] Error during migrations: %v", err)
+		return err
 	}
 	log.Println("Database migrations completed.")
 
-		// Logger yapılandırmasını yükle
-	config := logger.DefaultConfig()
-	config.Environment = "development" // Geliştirme ortamında çalışıyoruz
-	config.OutputPaths = []string{"stdout"} // Sadece terminale yaz
-
-	// Logger'ı başlat
-	logger.InitLogger(config)
-	// Örnek loglama
-	logger.Log.Info("Application started",
-		zap.String("service", "gobo"),
-		zap.String("status", "running"),
-	)
-	// Redis bağlantısını başlat
+	// Initialize Redis
 	cache.Connect()
+	log.Println("Redis connected.")
 
-	// Fiber uygulamasını başlat
+	// Initialize logger
+	config := logger.DefaultConfig()
+	config.Environment = "development"
+	config.OutputPaths = []string{"stdout"}
+	logger.InitLogger(config)
+
+	logger.Log.Info("Setup completed successfully.")
+	return nil
+}
+func main() {
+	if err := Setup(); err != nil {
+		log.Fatalf("Application setup failed: %v", err)
+	}
+
+	// Start the Fiber app
 	application := app.NewApp()
 
 	log.Println("Server is running on http://localhost:3000")
