@@ -1,6 +1,6 @@
-// Package main_test contains tests for the main application functionality.
+// Package main contains tests for the main application functionality.
 // It includes integration tests for the HTTP server.
-package main_test
+package main
 
 import (
 	"log"
