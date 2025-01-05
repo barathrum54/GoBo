@@ -96,7 +96,7 @@ func TestGetExamples(t *testing.T) {
 	log.Println("[Test] GET /examples response validated successfully.")
 }
 
-// TestCreateExample validates the POST /examples endpoint.
+// TestCreateExample validates the POST /examples endpoint with Basic Authentication.
 // It ensures that a new example can be created and saved to the database.
 func TestCreateExample(t *testing.T) {
 	// Set up the test database.
@@ -107,12 +107,17 @@ func TestCreateExample(t *testing.T) {
 	app := fiber.New()
 	Register(app)
 
+	// Define valid Basic Authentication credentials.
+	username := "admin"
+	password := "password"
+
 	// Define a request body for creating a new example.
 	body := `{"name": "New Example"}`
 
-	// Perform the POST request to the /examples endpoint.
+	// Perform the POST request to the /examples endpoint with Basic Authentication.
 	req := httptest.NewRequest("POST", "/examples", strings.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
+	req.SetBasicAuth(username, password)
 	resp, err := app.Test(req)
 
 	// Assert the response status code is 201 Created.
@@ -136,4 +141,38 @@ func TestCreateExample(t *testing.T) {
 	assert.Equal(t, "New Example", example.Name)
 
 	log.Println("[Test] Example saved successfully to the database.")
+}
+
+// TestCreateExampleUnauthorized validates the POST /examples endpoint without authentication.
+// It ensures that the API returns a 401 Unauthorized status code for missing credentials.
+func TestCreateExampleUnauthorized(t *testing.T) {
+	// Set up the test database.
+	setupGormTestDB(t)
+	defer teardownTestDB()
+
+	// Create a new Fiber app instance and register routes.
+	app := fiber.New()
+	Register(app)
+
+	// Define a request body for creating a new example.
+	body := `{"name": "Unauthorized Example"}`
+
+	// Perform the POST request to the /examples endpoint without Basic Authentication.
+	req := httptest.NewRequest("POST", "/examples", strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := app.Test(req)
+
+	// Assert the response status code is 401 Unauthorized.
+	assert.NoError(t, err)
+	assert.Equal(t, 401, resp.StatusCode)
+
+	// Parse the response body to verify the error message.
+	var response map[string]interface{}
+	err = json.NewDecoder(resp.Body).Decode(&response)
+	assert.NoError(t, err)
+
+	// Assert the error message.
+	assert.Equal(t, "Unauthorized", response["error"])
+
+	log.Println("[Test] POST /examples unauthorized access validated successfully.")
 }

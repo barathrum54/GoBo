@@ -4,6 +4,7 @@ package routes
 
 import (
 	"gobo/internal/db"
+	"gobo/internal/middleware"
 	"gobo/internal/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -36,9 +37,12 @@ func Register(app *fiber.App) {
 		return c.JSON(examples)
 	})
 
+	// Group for protected POST routes
+	protected := app.Group("/examples", middleware.BasicAuthMiddleware("admin", "password"))
+
 	// Create a new example in the database.
 	// POST /examples
-	app.Post("/examples", func(c *fiber.Ctx) error {
+	protected.Post("/", func(c *fiber.Ctx) error {
 		// Define the structure for parsing the request body.
 		type request struct {
 			Name string `json:"name"` // The name of the example to be created.
