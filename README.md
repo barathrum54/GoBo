@@ -1,4 +1,3 @@
-````plaintext
 # GoBo
 
 GoBo is a modular and scalable backend boilerplate written in Go. It leverages modern tools such as the Fiber framework, GORM ORM, and Zap logging for high-performance API development and extensibility.
@@ -23,7 +22,7 @@ GoBo is a modular and scalable backend boilerplate written in Go. It leverages m
 ```bash
 git clone https://github.com/username/gobo.git
 cd gobo
-````
+```
 
 ### 2. **Install Dependencies**
 
@@ -159,8 +158,3 @@ You can customize the logging configuration using the `InitLogger` function.
 5. Open a Pull Request.
 
 ---
-
-```
-
-Let me know if you'd like further refinements or additions!
-```
