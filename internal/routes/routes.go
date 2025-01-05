@@ -38,8 +38,10 @@ func Register(app *fiber.App) {
 	})
 
 	// Group for protected POST routes
-	protected := app.Group("/examples", middleware.BasicAuthMiddleware("admin", "password"))
-
+	protected := app.Group("/examples", 
+	    middleware.BasicAuthMiddleware("admin", "password"), // Basic Authentication
+	    middleware.RateLimitMiddleware(10, 1),               // Rate Limiting | x requests per y seconds
+	)
 	// Create a new example in the database.
 	// POST /examples
 	protected.Post("/", func(c *fiber.Ctx) error {
