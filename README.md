@@ -13,6 +13,7 @@ GoBo is a modular and scalable backend boilerplate written in Go. It leverages m
 - **High Code Quality**: Integrated with `golangci-lint` for linting and static analysis.
 - **Testing Support**: Structured testing setup using `testify`.
 - **Basic Authentication Middleware**: Protect specific routes with simple Basic Authentication.
+- **Rate Limiting Middleware**: Protect routes from abuse by limiting request rates.
 
 ---
 
@@ -158,6 +159,28 @@ func Register(app *fiber.App) {
 ```
 
 This middleware checks for the `Authorization` header and validates the username and password using Basic Authentication.
+
+---
+
+### Rate Limiting Middleware
+
+The project includes a Rate Limiting middleware located in the `internal/middleware` directory. This middleware can be used to protect routes by limiting the number of requests within a specified time frame.
+
+### Example Usage:
+
+```go
+import "gobo/internal/middleware"
+
+func Register(app *fiber.App) {
+    limited := app.Group("/limited", middleware.RateLimitMiddleware(5, 10*time.Second))
+
+    limited.Get("/test", func(c *fiber.Ctx) error {
+        return c.SendString("This route is rate limited")
+    })
+}
+```
+
+This middleware enforces a maximum number of requests (`Max`) within a specified duration (`Expiration`). If the limit is exceeded, a `429 Too Many Requests` response is returned.
 
 ---
 
