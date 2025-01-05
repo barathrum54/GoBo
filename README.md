@@ -1,105 +1,107 @@
+````plaintext
 # GoBo
 
-GoBo, Go programlama dilinde yazılmış modüler ve ölçeklenebilir bir backend boilerplate'tir. Fiber framework, GORM ORM ve Zap logging gibi modern araçlar kullanılarak geliştirilmiştir. Bu proje, hızlı API geliştirme ve kolay genişletilebilirlik için tasarlanmıştır.
+GoBo is a modular and scalable backend boilerplate written in Go. It leverages modern tools such as the Fiber framework, GORM ORM, and Zap logging for high-performance API development and extensibility.
 
 ---
 
-## 🚀 Özellikler
+## 🚀 Features
 
-- **Fiber Framework**: Hızlı ve esnek HTTP sunucusu.
-- **GORM**: Veritabanı ORM desteği ile kolay modelleme ve migration.
-- **Zap Logging**: Performanslı ve yapılandırılabilir loglama.
-- **Modüler Mimari**: API genişletilebilir yapıya sahip.
-- **Yüksek Kod Kalitesi**: `golangci-lint` ile linter ve statik analiz entegrasyonu.
-- **Test Desteği**: `testify` kullanarak birim testler için yapılandırılmış test altyapısı.
+- **Fiber Framework**: A fast and flexible HTTP server.
+- **GORM**: Database ORM support for easy modeling and migrations.
+- **Zap Logging**: High-performance, configurable logging.
+- **Modular Architecture**: Extensible API design for scalability.
+- **High Code Quality**: Integrated with `golangci-lint` for linting and static analysis.
+- **Testing Support**: Structured testing setup using `testify`.
 
 ---
 
-## 🛠️ Kurulum ve Çalıştırma
+## 🛠️ Installation and Setup
 
-### 1. **Depoyu Klonlayın**
+### 1. **Clone the Repository**
 
 ```bash
 git clone https://github.com/username/gobo.git
 cd gobo
-```
+````
 
-### 2. **Bağımlılıkları Yükleyin**
+### 2. **Install Dependencies**
 
 ```bash
 go mod tidy
 ```
 
-### 3. **.env Dosyasını Oluşturun**
+### 3. **Create the .env File**
 
-`DATABASE_URL` ortam değişkenini içeren bir `.env` dosyası oluşturun:
+Create a `.env` file with the following environment variables:
 
-```env
+```plaintext
 DATABASE_URL=postgres://username:password@localhost:5432/dbname
+REDIS_URL=localhost:6379
 ```
 
-### 4. **Veritabanı Migration İşlemi**
+### 4. **Run Database Migrations**
 
-Veritabanı tablolarını oluşturmak için proje başlatılırken migration işlemleri otomatik olarak yapılır.
+Migrations will run automatically when the project starts, creating necessary tables.
 
-### 5. **Sunucuyu Başlatın**
+### 5. **Start the Server**
 
 ```bash
 go run main.go
 ```
 
-Sunucu, `http://localhost:3000` adresinde çalışır.
+The server will be accessible at `http://localhost:3000`.
 
 ---
 
-## 📂 Proje Yapısı
+## 📂 Project Structure
 
 ```
 gobo/
 ├── internal/
-│   ├── app/           # Fiber uygulaması ve yapılandırma
-│   ├── db/            # Veritabanı bağlantıları
-│   ├── logger/        # Zap logger yapılandırması
-│   ├── cache/         # Redis bağlantısı ve yardımcı fonksiyonlar
-│   ├── models/        # GORM modelleri
-│   ├── routes/        # API rotaları
-├── .env               # Ortam değişkenleri
-├── .golangci-lint.yaml # Linter yapılandırması
-├── main.go            # Uygulamanın giriş noktası
-├── README.md          # Proje dökümantasyonu
+│   ├── app/           # Fiber app initialization and configuration
+│   ├── db/            # Database connection and setup
+│   ├── logger/        # Zap logger configuration
+│   ├── cache/         # Redis connection and helper functions
+│   ├── models/        # GORM models
+│   ├── routes/        # API routes
+├── .env               # Environment variables
+├── .golangci-lint.yaml # Linter configuration
+├── main.go            # Application entry point
+├── README.md          # Project documentation
 ```
 
 ---
 
-## 📋 Kullanılan Teknolojiler
+## 📋 Technologies Used
 
-- [Go](https://go.dev/) - Programlama dili
-- [Fiber](https://gofiber.io/) - HTTP framework
-- [GORM](https://gorm.io/) - ORM kütüphanesi
-- [Zap](https://github.com/uber-go/zap) - Loglama
-- [Redis](https://redis.io/) - Önbellekleme
-- [PostgreSQL](https://www.postgresql.org/) - Veritabanı
-- [GolangCI-Lint](https://golangci-lint.run/) - Kod analizi ve linter
+- [Go](https://go.dev/) - Programming Language
+- [Fiber](https://gofiber.io/) - HTTP Framework
+- [GORM](https://gorm.io/) - ORM Library
+- [Zap](https://github.com/uber-go/zap) - Logging Library
+- [Redis](https://redis.io/) - Caching
+- [PostgreSQL](https://www.postgresql.org/) - Database
+- [GolangCI-Lint](https://golangci-lint.run/) - Code Analysis and Linter
 
 ---
 
-## ✅ Testler
+## ✅ Testing
 
-### Testleri Çalıştırmak
+### Run Tests
 
-Projede bulunan testleri çalıştırmak için aşağıdaki komutu kullanabilirsiniz:
+To execute the test suite:
 
 ```bash
 go test ./... -v
 ```
 
-Testler, veritabanını sıfırlayıp yeni tablolar oluşturur ve CRUD işlemlerini doğrular.
+The tests will reset the database, create new tables, and validate CRUD operations.
 
 ---
 
 ## 🔧 Linter
 
-Projenizde statik kod analizi ve linter kontrolü yapmak için:
+To run static code analysis and linter checks:
 
 ```bash
 golangci-lint run
@@ -107,21 +109,19 @@ golangci-lint run
 
 ---
 
-## 🔧 Redis Önbelleği
+## 🔧 Redis Cache
 
-Proje, Redis ile önbellekleme desteğine sahiptir. Redis bağlantısı `internal/cache` modülünde yönetilir ve API rotalarında kullanılabilir.
+The project includes Redis caching support, managed within the `internal/cache` module and available for use in API routes.
 
-### Örnek Kullanım:
-
-Aşağıdaki örnek, bir veriyi Redis önbelleğine kaydetme ve alma işlemini gösterir:
+### Example Usage:
 
 ```go
 import "gobo/internal/cache"
 
-// Veriyi Redis'e kaydet
+// Save data to Redis
 cache.Set("key", "value", 60*time.Second)
 
-// Redis'ten veri al
+// Retrieve data from Redis
 value, err := cache.Get("key")
 if err != nil {
     log.Println("Cache miss")
@@ -132,11 +132,11 @@ if err != nil {
 
 ---
 
-## 🔥 Loglama
+## 🔥 Logging
 
-Proje, **Zap** kullanılarak performanslı ve yapılandırılabilir bir loglama altyapısına sahiptir. Loglama yapılandırması `internal/logger` dizininde bulunur.
+The project uses **Zap** for high-performance and configurable logging. The logging setup is located in the `internal/logger` directory.
 
-### Örnek Kullanım:
+### Example Usage:
 
 ```go
 import "gobo/internal/logger"
@@ -146,16 +146,21 @@ func Example() {
 }
 ```
 
-Loglama yapılandırmasını değiştirmek için `InitLogger` fonksiyonunu kullanabilirsiniz.
+You can customize the logging configuration using the `InitLogger` function.
 
 ---
 
-## 🤝 Katkıda Bulunma
+## 🤝 Contributing
 
-1. Depoyu fork'layın.
-2. Kendi dalınızı oluşturun: `git checkout -b my-new-feature`
-3. Değişikliklerinizi commit edin: `git commit -m 'Add some feature'`
-4. Dalınızı push'layın: `git push origin my-new-feature`
-5. Bir PR (Pull Request) oluşturun.
+1. Fork the repository.
+2. Create a new branch: `git checkout -b my-new-feature`.
+3. Commit your changes: `git commit -m 'Add some feature'`.
+4. Push the branch: `git push origin my-new-feature`.
+5. Open a Pull Request.
 
 ---
+
+```
+
+Let me know if you'd like further refinements or additions!
+```
