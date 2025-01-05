@@ -12,6 +12,7 @@ GoBo is a modular and scalable backend boilerplate written in Go. It leverages m
 - **Modular Architecture**: Extensible API design for scalability.
 - **High Code Quality**: Integrated with `golangci-lint` for linting and static analysis.
 - **Testing Support**: Structured testing setup using `testify`.
+- **Basic Authentication Middleware**: Protect specific routes with simple Basic Authentication.
 
 ---
 
@@ -64,6 +65,7 @@ gobo/
 │   ├── cache/         # Redis connection and helper functions
 │   ├── models/        # GORM models
 │   ├── routes/        # API routes
+│   ├── middleware/    # Middleware for request handling
 ├── .env               # Environment variables
 ├── .golangci-lint.yaml # Linter configuration
 ├── main.go            # Application entry point
@@ -128,6 +130,34 @@ if err != nil {
     log.Printf("Cache hit: %s", value)
 }
 ```
+
+---
+
+## 🔥 Middleware
+
+### Basic Authentication Middleware
+
+The project includes a Basic Authentication middleware located in the `internal/middleware` directory. This middleware can be used to protect specific routes with simple Basic Authentication.
+
+### Example Usage:
+
+```go
+import "gobo/internal/middleware"
+
+func Register(app *fiber.App) {
+    app.Get("/public", func(c *fiber.Ctx) error {
+        return c.SendString("This is a public route")
+    })
+
+    protected := app.Group("/protected", middleware.BasicAuthMiddleware("admin", "password"))
+
+    protected.Get("/secure", func(c *fiber.Ctx) error {
+        return c.SendString("You are authorized")
+    })
+}
+```
+
+This middleware checks for the `Authorization` header and validates the username and password using Basic Authentication.
 
 ---
 
