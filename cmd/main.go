@@ -12,12 +12,13 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"gorm.io/gorm"
 )
 
 // Setup initializes the application's dependencies, including:
 // - Loading environment variables
 // - Connecting to the database (GORM)
-// - Running database migrations
+// - Running database migrations for all models
 // - Initializing Redis
 // - Setting up the logger
 // Returns an error if any step in the initialization fails.
@@ -38,8 +39,8 @@ func Setup() error {
 	db.ConnectGORM()
 	log.Println("Database connection established with GORM.")
 
-	// Run database migrations
-	err := models.AutoMigrateExamples(db.GormDB)
+	// Run database migrations for all models
+	err := AutoMigrateAllModels(db.GormDB)
 	if err != nil {
 		// Return an error if migrations fail
 		return err
@@ -58,6 +59,24 @@ func Setup() error {
 
 	// Log a message indicating that setup was successful
 	logger.Log.Info("Setup completed successfully.")
+	return nil
+}
+
+// AutoMigrateAllModels migrates all the models automatically using GORM.
+// It accepts the GORM DB connection as a parameter and migrates each model in the list.
+func AutoMigrateAllModels(db *gorm.DB) error {
+	// List all models you want to migrate
+	models := []interface{}{
+		&models.Example{},
+		&models.User{},  // Add other models here as needed
+	}
+
+	// Loop through all models and run AutoMigrate
+	for _, model := range models {
+		if err := db.AutoMigrate(model); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
