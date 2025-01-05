@@ -1,6 +1,6 @@
 # GoBo
 
-GoBo is a modular and scalable backend boilerplate written in Go. It leverages modern tools such as the Fiber framework, GORM ORM, and Zap logging for high-performance API development and extensibility.
+GoBo is a modular and scalable backend boilerplate written in Go. It leverages modern tools such as the Fiber framework, GORM ORM, Zap logging, and Swagger for high-performance API development and extensibility.
 
 ---
 
@@ -9,6 +9,7 @@ GoBo is a modular and scalable backend boilerplate written in Go. It leverages m
 - **Fiber Framework**: A fast and flexible HTTP server.
 - **GORM**: Database ORM support for easy modeling and migrations.
 - **Zap Logging**: High-performance, configurable logging.
+- **Swagger Integration**: Auto-generated API documentation with Swagger UI.
 - **Modular Architecture**: Extensible API design for scalability.
 - **High Code Quality**: Integrated with `golangci-lint` for linting and static analysis.
 - **Testing Support**: Structured testing setup using `testify`.
@@ -41,11 +42,25 @@ DATABASE_URL=postgres://username:password@localhost:5432/dbname
 REDIS_URL=localhost:6379
 ```
 
-### 4. **Run Database Migrations**
+### 4. **Generate Swagger Documentation**
+
+Install `swag` if not already installed:
+
+```bash
+go install github.com/swaggo/swag/cmd/swag@latest
+```
+
+Generate Swagger documentation:
+
+```bash
+swag init
+```
+
+### 5. **Run Database Migrations**
 
 Migrations will run automatically when the project starts, creating necessary tables.
 
-### 5. **Start the Server**
+### 6. **Start the Server**
 
 ```bash
 go run cmd/main.go
@@ -53,22 +68,31 @@ go run cmd/main.go
 
 The server will be accessible at `http://localhost:3000`.
 
+### 7. **Access Swagger UI**
+
+Visit `http://localhost:3000/swagger/index.html` to explore the Swagger UI for API documentation.
+
 ---
 
 ## 📂 Project Structure
 
 ```
 gobo/
+├── cmd/                # Entry point for the HTTP server
+├── docs/               # Swagger documentation files
 ├── internal/
 │   ├── app/           # Fiber app initialization and configuration
+│   ├── cache/         # Redis connection and helper functions
 │   ├── db/            # Database connection and setup
 │   ├── logger/        # Zap logger configuration
-│   ├── cache/         # Redis connection and helper functions
+│   ├── middleware/    # Middleware for request handling
 │   ├── models/        # GORM models
 │   ├── routes/        # API routes
-│   ├── middleware/    # Middleware for request handling
+│   ├── testhelpers/   # Utilities for testing
 ├── .env               # Environment variables
 ├── .golangci-lint.yaml # Linter configuration
+├── go.mod             # Go module definition
+├── go.sum             # Module dependencies
 ├── main.go            # Application entry point
 ├── README.md          # Project documentation
 ```
@@ -83,6 +107,7 @@ gobo/
 - [Zap](https://github.com/uber-go/zap) - Logging Library
 - [Redis](https://redis.io/) - Caching
 - [PostgreSQL](https://www.postgresql.org/) - Database
+- [Swaggo](https://github.com/swaggo/swag) - Swagger Documentation
 - [GolangCI-Lint](https://golangci-lint.run/) - Code Analysis and Linter
 
 ---
@@ -158,8 +183,6 @@ func Register(app *fiber.App) {
 }
 ```
 
-This middleware checks for the `Authorization` header and validates the username and password using Basic Authentication.
-
 ---
 
 ### Rate Limiting Middleware
@@ -180,8 +203,6 @@ func Register(app *fiber.App) {
 }
 ```
 
-This middleware enforces a maximum number of requests (`Max`) within a specified duration (`Expiration`). If the limit is exceeded, a `429 Too Many Requests` response is returned.
-
 ---
 
 ## 🔥 Logging
@@ -198,7 +219,31 @@ func Example() {
 }
 ```
 
-You can customize the logging configuration using the `InitLogger` function.
+---
+
+## 🔧 Swagger Integration
+
+The project uses **Swaggo** for generating Swagger API documentation. The documentation is served at `/swagger/index.html`.
+Fiber with **Swaggo** requires named functions for routes to work properly.
+
+### Example Annotation:
+
+```go
+// @Summary      Example Endpoint
+// @Description  An example endpoint.
+// @Tags         examples
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} ExampleResponse
+// @Failure      400 {object} ErrorResponse
+// @Router       /example [get]
+```
+
+To add Swagger documentation, annotate your handlers with appropriate tags as shown above. Regenerate the docs with:
+
+```bash
+swag init
+```
 
 ---
 
