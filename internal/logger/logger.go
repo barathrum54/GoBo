@@ -45,8 +45,8 @@ func InitLogger(config Config) {
 
 	// Customize the encoder configuration for log formatting.
 	zapConfig.EncoderConfig = zapcore.EncoderConfig{
-		TimeKey:        "timestamp",                 // Key for timestamp in the log.
-		LevelKey:       "level",                     // Key for log level.
+		TimeKey:        "timestamp",                // Key for timestamp in the log.
+		LevelKey:       "level",                    // Key for log level.
 		NameKey:        "logger",                   // Key for logger name.
 		CallerKey:      "caller",                   // Key for caller information.
 		MessageKey:     "msg",                      // Key for log message.

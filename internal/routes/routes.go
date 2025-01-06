@@ -26,6 +26,8 @@ type CreateExampleRequest struct {
 	Name string `json:"name"` // The name of the example to be created.
 }
 
+
+
 // Register registers all routes for the application.
 // It maps HTTP endpoints to their corresponding handlers and integrates them with the database.
 //

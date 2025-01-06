@@ -1,8 +1,22 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "A boilerplate application for building web services using Go and Fiber.",
+        "title": "GoBo - Go Fiber Boilerplate",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Barathrum54",
+            "url": "linkedin.com/in/barathrum54",
+            "email": "tahabdurmus0@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "0.2"
     },
+    "host": "localhost:3000",
+    "basePath": "/",
     "paths": {
         "/": {
             "get": {
@@ -145,6 +159,11 @@
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
         }
     }
 }

@@ -16,26 +16,6 @@ import (
 	"gorm.io/gorm"
 )
 
-//	@title			GoBo - Go Fiber Boilerplate
-//	@version		0.2
-//	@description	A boilerplate application for building web services using Go and Fiber.
-//	@termsOfService	http://swagger.io/terms/
-
-//	@contact.name	Barathrum54
-//	@contact.url	linkedin.com/in/barathrum54
-//	@contact.email	tahabdurmus0@gmail.com
-
-//	@license.name	Apache 2.0
-//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
-
-//	@host		localhost:3000
-//	@BasePath	/
-
-//	@securityDefinitions.basic	BasicAuth
-
-//	@externalDocs.description	Find out more about Swagger
-//	@externalDocs.url			https://swagger.io/resources/open-api/
-
 // Setup initializes the application's dependencies, including:
 // - Loading environment variables
 // - Connecting to the database (GORM)
