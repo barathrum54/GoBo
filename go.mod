@@ -3,11 +3,12 @@ module gobo
 go 1.23.3
 
 require (
+	github.com/getsentry/sentry-go v0.31.1
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/gofiber/swagger v1.1.0
 	github.com/joho/godotenv v1.5.1
 	github.com/redis/go-redis/v9 v9.7.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 	github.com/swaggo/swag v1.16.3
 	go.uber.org/zap v1.27.0
 	gorm.io/driver/postgres v1.5.11

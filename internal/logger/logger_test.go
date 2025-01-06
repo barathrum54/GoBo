@@ -13,12 +13,13 @@ import (
 )
 
 // TestInitLogger_DevelopmentConfig verifies that the logger initializes correctly
-// in the "development" environment with debug-level logging.
+// in the "development" environment with debug-level logging and no Sentry integration.
 func TestInitLogger_DevelopmentConfig(t *testing.T) {
 	// Create a logger configuration for the development environment.
 	config := logger.Config{
 		Level:       zapcore.DebugLevel,  // Set log level to DEBUG
 		Environment: "development",      // Set environment to development
+		SentryDSN:   "",                 // No Sentry integration
 	}
 
 	// Create a temporary file to capture logger output for testing.
@@ -55,13 +56,14 @@ func TestInitLogger_DevelopmentConfig(t *testing.T) {
 }
 
 // TestInitLogger_ProductionConfig verifies that the logger initializes correctly
-// in the "production" environment with info-level logging.
+// in the "production" environment with info-level logging and Sentry integration.
 func TestInitLogger_ProductionConfig(t *testing.T) {
 	// Create a logger configuration for the production environment.
 	config := logger.Config{
 		Level:       zapcore.InfoLevel,   // Set log level to INFO
 		Environment: "production",       // Set environment to production
 		OutputPaths: []string{"stdout"}, // Log output to standard output
+		SentryDSN:   "http://example.com/123", // Dummy Sentry DSN for testing
 	}
 
 	// Initialize the logger with the specified configuration.
@@ -74,6 +76,8 @@ func TestInitLogger_ProductionConfig(t *testing.T) {
 
 	// Log a test message to verify output.
 	logger.Log.Info("Test info message") // INFO level message
+
+	// Note: We can't test the actual Sentry integration here as it requires external dependencies.
 }
 
 // TestInitLogger_InvalidConfig tests the behavior of the logger when an invalid environment is provided.
@@ -122,5 +126,10 @@ func TestDefaultConfig(t *testing.T) {
 		if defaultConfig.OutputPaths[i] != path {
 			t.Errorf("Expected output path %s, got %s", path, defaultConfig.OutputPaths[i])
 		}
+	}
+
+	// Validate the default SentryDSN.
+	if defaultConfig.SentryDSN != "" {
+		t.Errorf("Expected default SentryDSN to be empty, got %s", defaultConfig.SentryDSN)
 	}
 }
